@@ -1,15 +1,19 @@
 version: '3.9'
+
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     secrets:
       - empr_token
     environment:
+      NODE_ENV: production
       EMPR_TOKEN_FILE: /run/secrets/empr_token
-    entrypoint: |
-      sh -c 'export EMPR_TOKEN=$(cat $EMPR_TOKEN_FILE) && npm start'
+    command: >
+      sh -c "export EMPR_TOKEN=$(cat $EMPR_TOKEN_FILE) && npm run start"
 
 secrets:
   empr_token:

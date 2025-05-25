@@ -1,11 +1,13 @@
 'use client'
 
-import {useEffect, useRef, useState} from 'react'
-import {deleteProfiles, getFolders, getProfilesWithMeta, uploadProfiles} from '@/lib/emprClient'
-import {FolderList} from '@/components/FolderList'
-import {ProfileTable} from '@/components/ProfileTable'
-import {ActionPanel} from '@/components/ActionPanel'
-import {ProfileUploadDialog, ProfileUploadDialogRef} from "@/components/ProfileUploadDialog";
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { useEffect, useRef, useState } from 'react'
+import { deleteProfiles, getFolders, getProfilesWithMeta, uploadProfiles } from '@/lib/emprClient'
+import { FolderList } from '@/components/FolderList'
+import { ProfileTable } from '@/components/ProfileTable'
+import { ActionPanel } from '@/components/ActionPanel'
+import { ProfileUploadDialog, ProfileUploadDialogRef } from '@/components/ProfileUploadDialog'
 
 function cleanProfiles(profiles: any[], statuses: any[], tags: any[]) {
     const statusMap = Object.fromEntries(statuses.map((s: any) => [s.id, s.status]))
@@ -22,27 +24,59 @@ function cleanProfiles(profiles: any[], statuses: any[], tags: any[]) {
 }
 
 export default function HomePage() {
+    const { data: session, status } = useSession()
+    const router = useRouter()
+
     const [folders, setFolders] = useState<any[]>([])
     const [profiles, setProfiles] = useState<any[]>([])
     const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null)
     const [selectedIds, setSelectedIds] = useState<string[]>([])
+    const dialogRef = useRef<ProfileUploadDialogRef>(null)
 
     useEffect(() => {
-        getFolders().then(({data}) => setFolders(data))
-    }, [])
+        if (status === 'unauthenticated') router.replace('/login')
+    }, [status, router])
+
+    useEffect(() => {
+        if (status === 'authenticated') {
+            getFolders().then(({ data }) => setFolders(data))
+        }
+    }, [status])
 
     useEffect(() => {
         if (!selectedFolderId) return
 
-        getProfilesWithMeta(selectedFolderId).then(({profiles, statuses, tags}) => {
+        getProfilesWithMeta(selectedFolderId).then(({ profiles, statuses, tags }) => {
             setProfiles(cleanProfiles(profiles, statuses, tags))
         })
     }, [selectedFolderId])
 
-    const handleDownload = () => {
+    if (status !== 'authenticated') return null
+
+    const handleDownload = async () => {
         if (!selectedFolderId) return
-        const url = `/api/export?folderId=${selectedFolderId}`
-        window.open(url, '_blank')
+
+        const defaultFileName = `profiles-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}.json`
+        const name = prompt('Введите имя файла для сохранения:', defaultFileName)
+
+        if (!name) return
+
+        const res = await fetch(`/api/export?folderId=${selectedFolderId}`)
+        if (!res.ok) {
+            alert('Ошибка при получении файла')
+            return
+        }
+
+        const blob = await res.blob()
+        const blobUrl = URL.createObjectURL(blob)
+
+        const a = document.createElement('a')
+        a.href = blobUrl
+        a.download = name.endsWith('.json') ? name : `${name}.json`
+        document.body.appendChild(a)
+        a.click()
+        a.remove()
+        URL.revokeObjectURL(blobUrl)
     }
 
     const handleDelete = async () => {
@@ -50,11 +84,9 @@ export default function HomePage() {
         setSelectedIds([])
 
         await deleteProfiles(selectedFolderId, selectedIds)
-        const {profiles, statuses, tags} = await getProfilesWithMeta(selectedFolderId)
+        const { profiles, statuses, tags } = await getProfilesWithMeta(selectedFolderId)
         setProfiles(cleanProfiles(profiles, statuses, tags))
     }
-
-    const dialogRef = useRef<ProfileUploadDialogRef>(null)
 
     const handleUpload = () => {
         const input = document.createElement('input')
@@ -73,7 +105,7 @@ export default function HomePage() {
         if (!selectedFolderId) return
         await uploadProfiles(selectedFolderId, profilesToUpload)
 
-        const {profiles, statuses, tags} = await getProfilesWithMeta(selectedFolderId)
+        const { profiles, statuses, tags } = await getProfilesWithMeta(selectedFolderId)
         setProfiles(cleanProfiles(profiles, statuses, tags))
         setSelectedIds([])
     }
@@ -92,11 +124,12 @@ export default function HomePage() {
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center justify-between">
                         <h2 className="text-lg font-bold">
-                            Профили  ({profiles.length})
+                            Профили ({profiles.length})
                             {selectedIds.length > 0 && (
                                 <span className="text-sm text-zinc-400"></span>
                             )}
-                        </h2>                    </div>
+                        </h2>
+                    </div>
                     <div className="flex items-center">
                         <ActionPanel
                             selectedCount={selectedIds.length}
