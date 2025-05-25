@@ -1,0 +1,35 @@
+{
+  "profile_notes": "",
+  "new_profile_tags": [],
+  "proxy_id": null,
+  "browser": "Chrome",
+  "platform": "MacOS",
+  "fingerprint": {
+    "major": 134,
+    "os": "macos",
+    "webrtc_pref": "auto",
+    "canvas_pref": "real",
+    "webgl_pref": "real",
+    "ports_protection": [3389, 5900, 5901, 5800, 7070, 6566, 5938, 1080, 8080, 3128, 3030],
+    "fonts": [],
+    "hints": {
+      "architecture": "arm",
+      "bitness": 64,
+      "model": "",
+      "platform": "macOS",
+      "platform_version": "14.2.1",
+      "ua_full_version": "134.0.6998.166",
+      "mobile": false
+    },
+    "navigator": {
+      "hardware_concurrency": 8,
+      "device_memory": 8,
+      "max_touch_points": 0,
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36",
+      "platform": "MacIntel",
+      "language": "en-US",
+      "languages": ["en-US", "en", "ar"],
+      "quota": 147064317542
+    }
+  }
+}

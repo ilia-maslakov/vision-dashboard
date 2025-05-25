@@ -1,0 +1,16 @@
+version: '3.9'
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    secrets:
+      - empr_token
+    environment:
+      EMPR_TOKEN_FILE: /run/secrets/empr_token
+    entrypoint: |
+      sh -c 'export EMPR_TOKEN=$(cat $EMPR_TOKEN_FILE) && npm start'
+
+secrets:
+  empr_token:
+    file: ./secret/empr_token.txt
