@@ -1,13 +1,13 @@
 'use client'
 
-import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
-import { deleteProfiles, getFolders, getProfilesWithMeta, uploadProfiles } from '@/lib/emprClient'
-import { FolderList } from '@/components/FolderList'
-import { ProfileTable } from '@/components/ProfileTable'
-import { ActionPanel } from '@/components/ActionPanel'
-import { ProfileUploadDialog, ProfileUploadDialogRef } from '@/components/ProfileUploadDialog'
+import {useSession} from 'next-auth/react'
+import {useRouter} from 'next/navigation'
+import {useEffect, useRef, useState} from 'react'
+import {deleteProfiles, getFolders, getProfilesWithMeta, uploadProfiles} from '@/lib/emprClient'
+import {FolderList} from '@/components/FolderList'
+import {ProfileTable} from '@/components/ProfileTable'
+import {ActionPanel} from '@/components/ActionPanel'
+import {ProfileUploadDialog, ProfileUploadDialogRef} from '@/components/ProfileUploadDialog'
 
 function cleanProfiles(profiles: any[], statuses: any[], tags: any[]) {
     const statusMap = Object.fromEntries(statuses.map((s: any) => [s.id, s.status]))
@@ -24,7 +24,7 @@ function cleanProfiles(profiles: any[], statuses: any[], tags: any[]) {
 }
 
 export default function HomePage() {
-    const { data: session, status } = useSession()
+    const {status} = useSession()
     const router = useRouter()
 
     const [folders, setFolders] = useState<any[]>([])
@@ -39,14 +39,14 @@ export default function HomePage() {
 
     useEffect(() => {
         if (status === 'authenticated') {
-            getFolders().then(({ data }) => setFolders(data))
+            getFolders().then(({data}) => setFolders(data))
         }
     }, [status])
 
     useEffect(() => {
         if (!selectedFolderId) return
 
-        getProfilesWithMeta(selectedFolderId).then(({ profiles, statuses, tags }) => {
+        getProfilesWithMeta(selectedFolderId).then(({profiles, statuses, tags}) => {
             setProfiles(cleanProfiles(profiles, statuses, tags))
         })
     }, [selectedFolderId])
@@ -84,7 +84,7 @@ export default function HomePage() {
         setSelectedIds([])
 
         await deleteProfiles(selectedFolderId, selectedIds)
-        const { profiles, statuses, tags } = await getProfilesWithMeta(selectedFolderId)
+        const {profiles, statuses, tags} = await getProfilesWithMeta(selectedFolderId)
         setProfiles(cleanProfiles(profiles, statuses, tags))
     }
 
@@ -105,7 +105,7 @@ export default function HomePage() {
         if (!selectedFolderId) return
         await uploadProfiles(selectedFolderId, profilesToUpload)
 
-        const { profiles, statuses, tags } = await getProfilesWithMeta(selectedFolderId)
+        const {profiles, statuses, tags} = await getProfilesWithMeta(selectedFolderId)
         setProfiles(cleanProfiles(profiles, statuses, tags))
         setSelectedIds([])
     }

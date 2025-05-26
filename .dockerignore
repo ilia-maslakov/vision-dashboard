@@ -1,0 +1,8 @@
+.next
+.git
+.idea
+node_modules
+.secret
+.secret/
+secret/
+*.log
