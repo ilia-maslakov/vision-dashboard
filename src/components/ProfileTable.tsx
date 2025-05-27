@@ -19,7 +19,7 @@ interface Profile {
 interface ProfileTableProps {
     profiles: Profile[]
     selectedIds: string[]
-    onSelectionChange: (ids: string[]) => void
+    onSelectionChangeAction: (ids: string[]) => void
 }
 
 type SortKey = 'email' | 'status' | 'note' | 'tag'
@@ -29,7 +29,7 @@ export function ProfileTable(
     {
         profiles = [],
         selectedIds,
-        onSelectionChange,
+        onSelectionChangeAction,
     }: ProfileTableProps) {
     const [sortKey, setSortKey] = useState<SortKey>('email')
     const [sortOrder, setSortOrder] = useState<SortOrder>('asc')
@@ -38,12 +38,12 @@ export function ProfileTable(
         const updated = selectedIds.includes(id)
             ? selectedIds.filter(x => x !== id)
             : [...selectedIds, id]
-        onSelectionChange(updated)
+        onSelectionChangeAction(updated)
     }
 
     const toggleAll = () => {
         const updated = selectedIds.length === profiles.length ? [] : profiles.map(p => p.id)
-        onSelectionChange(updated)
+        onSelectionChangeAction(updated)
     }
 
     const toggleSort = (key: SortKey) => {
@@ -68,8 +68,8 @@ export function ProfileTable(
         const Icon = sortOrder === 'asc' ? ChevronUp : ChevronDown
         return (
             <span className="inline-block w-[16px] text-zinc-400">
-        {visible ? <Icon size={14}/> : null}
-      </span>
+                {visible ? <Icon size={14}/> : null}
+            </span>
         )
     }
 
@@ -99,9 +99,10 @@ export function ProfileTable(
                             onClick={() => toggleSort(key)}
                         >
                             <div className="flex items-center gap-1 border-r border-zinc-600 pr-3">
-                  <span className="group-hover:text-white text-zinc-400 transition-colors text-base duration-200 capitalize">
-                    {key === 'email' ? 'Имя' : key === 'note' ? 'Заметки' : key === 'tag' ? 'Теги' : 'Статус'}
-                  </span>
+                                    <span
+                                        className="group-hover:text-white text-zinc-400 transition-colors text-base duration-200 capitalize">
+                                        {key === 'email' ? 'Имя' : key === 'note' ? 'Заметки' : key === 'tag' ? 'Теги' : 'Статус'}
+                                    </span>
                                 {SortIcon(key)}
                             </div>
                         </th>

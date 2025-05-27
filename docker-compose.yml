@@ -7,19 +7,15 @@ services:
       dockerfile: Dockerfile
     image: ilsmind/vision-dashboard:latest
     ports:
-      - "3000:3000"
+      - "4000:3000"
     environment:
       NODE_ENV: production
-      EMPR_TOKEN_FILE: /run/secrets/empr_token
-      USERS_FILE_PATH: /run/secrets/users.json
-      NEXTAUTH_SECRET: "LkRYk9ND5g63FnPaEzo8pzy+lY9ZfiXPIl1gfq2d7r4="
+      EMPR_TOKEN: ${EMPR_TOKEN}
+      USERS_FILE_PATH: /run/secrets/users_json
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
     secrets:
-      - empr_token
       - users_json
 
 secrets:
-  empr_token:
-    file: ./secret/empr_token.txt
-
   users_json:
     file: ./secret/users.json

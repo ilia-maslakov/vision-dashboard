@@ -4,12 +4,11 @@ import clsx from 'clsx'
 export function FolderList(
     {
         folders,
-        onSelect,
+        onSelectAction,
         selectedId,
-    }:
-    {
+    }: {
         folders: any[]
-        onSelect: (id: string) => void
+        onSelectAction: (id: string) => void
         selectedId: string | null
     }) {
     return (
@@ -21,7 +20,7 @@ export function FolderList(
                         'cursor-pointer px-3 py-2 rounded text-sm',
                         folder.id === selectedId ? 'bg-zinc-700 font-semibold' : 'hover:bg-zinc-800'
                     )}
-                    onClick={() => onSelect(folder.id)}
+                    onClick={() => onSelectAction(folder.id)}
                 >
                     {folder.folder_name}
                 </li>

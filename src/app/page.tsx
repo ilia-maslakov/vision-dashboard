@@ -116,7 +116,7 @@ export default function HomePage() {
                 <h2 className="text-lg font-bold mb-4">Папки</h2>
                 <FolderList
                     folders={folders}
-                    onSelect={setSelectedFolderId}
+                    onSelectAction={setSelectedFolderId}
                     selectedId={selectedFolderId}
                 />
             </aside>
@@ -133,9 +133,9 @@ export default function HomePage() {
                     <div className="flex items-center">
                         <ActionPanel
                             selectedCount={selectedIds.length}
-                            onDownload={handleDownload}
-                            onDelete={handleDelete}
-                            onUpload={handleUpload}
+                            onDeleteAction={handleDelete}
+                            onUploadAction={handleUpload}
+                            onDownloadAction={handleDownload}
                         />
                     </div>
                 </div>
@@ -147,7 +147,7 @@ export default function HomePage() {
                 <ProfileTable
                     profiles={profiles}
                     selectedIds={selectedIds}
-                    onSelectionChange={setSelectedIds}
+                    onSelectionChangeAction={setSelectedIds}
                 />
             </main>
         </div>
