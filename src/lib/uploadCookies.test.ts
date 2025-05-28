@@ -1,43 +1,57 @@
+// src/lib/uploadCookies.test.ts
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import * as authModule from './authToken'
+import { uploadCookies } from './uploadCookies'
 
-describe('authToken', () => {
-  beforeEach(() => {
-    authModule.setCachedToken(null)
-    vi.resetAllMocks()
+// мок для fetch и токена
+const fetchMock = vi.fn()
+const tokenMock = vi.fn()
+
+vi.mock('./authToken', () => ({
+  BASE: 'https://example.com/api',
+  token: () => tokenMock(),
+}))
+
+global.fetch = fetchMock
+
+beforeEach(() => {
+  fetchMock.mockReset()
+  tokenMock.mockReset()
+})
+
+describe('uploadCookies', () => {
+  const folderId = 'folder123'
+  const profileId = 'profile456'
+  const cookies = [{ name: 'sid', value: 'abc123' }]
+
+  it('успешно загружает cookies', async () => {
+    tokenMock.mockResolvedValue('mock-token')
+    fetchMock.mockResolvedValueOnce({ ok: true })
+
+    await uploadCookies(folderId, profileId, cookies)
+
+    expect(fetchMock).toHaveBeenCalledWith(
+        'https://example.com/api/cookies/import/folder123/profile456',
+        expect.objectContaining({
+          method: 'POST',
+          headers: {
+            'X-Token': 'mock-token',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ cookies }),
+        })
+    )
   })
 
-  it('returns cached token if already set', async () => {
-    authModule.setCachedToken('cached-token')
+  it('кидает ошибку при неудачном запросе', async () => {
+    tokenMock.mockResolvedValue('mock-token')
+    fetchMock.mockResolvedValueOnce({
+      ok: false,
+      status: 500,
+      text: vi.fn().mockResolvedValue('Internal Server Error'),
+    })
 
-    global.fetch = vi.fn(() => {
-      throw new Error('fetch не должен быть вызван')
-    }) as any
-
-    const result = await authModule.token()
-    expect(result).toBe('cached-token')
-  })
-
-  it('fetches token if not cached', async () => {
-    global.fetch = vi.fn((url) => {
-      expect(url).toContain('/api/internal/empr-token') // Проверка что вызывается нужный URL
-      return Promise.resolve({
-        ok: true,
-        json: async () => ({ token: 'test-token' }),
-      })
-    }) as any
-
-    const result = await authModule.token()
-    expect(result).toBe('test-token')
-  })
-
-  it('throws if token fetch fails', async () => {
-    global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: false,
-      })
-    ) as any
-
-    await expect(authModule.token()).rejects.toThrow('Unauthorized (EMPR_TOKEN)')
+    await expect(uploadCookies(folderId, profileId, cookies)).rejects.toThrow(
+        'Ошибка загрузки куков: 500 - Internal Server Error'
+    )
   })
 })

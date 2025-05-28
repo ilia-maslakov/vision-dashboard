@@ -25,11 +25,11 @@ export async function GET(req: NextRequest) {
   const result = []
 
   for (const profile of items) {
-    const profile_name = profile.profile_name || ''
-    const profile_notes = profile.profile_notes || ''
-    const profile_status = profile.profile_status || null
+    const profile_name: string = profile.profile_name || ''
+    const profile_notes: string= profile.profile_notes || ''
+    const profile_status: string = profile.profile_status || null
     const profile_tags = profile.profile_tags || []
-    const profileId = profile.id
+    const profileId: string = profile.id
     const proxy = profile.proxy || null
 
     let cookie = []

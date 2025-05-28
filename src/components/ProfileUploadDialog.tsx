@@ -49,3 +49,5 @@ export const ProfileUploadDialog = forwardRef<ProfileUploadDialogRef, Props>(
         )
     }
 )
+
+ProfileUploadDialog.displayName = 'ProfileUploadDialog'

@@ -2,13 +2,13 @@
 
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import {FormEvent, useState} from 'react'
 
 export default function LoginPage() {
   const router = useRouter()
   const [error, setError] = useState(false)
 
-  async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
+  async function handleLogin(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const form = new FormData(e.currentTarget)
     const res = await signIn('credentials', {

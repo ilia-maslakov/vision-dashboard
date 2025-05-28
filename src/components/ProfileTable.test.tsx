@@ -1,8 +1,10 @@
+'use client'
+
 import React, { useState } from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
-import { ProfileTable } from './ProfileTable'
 import { describe, it, expect } from 'vitest'
-import {Profile} from "@/types/profile";
+import { ProfileTable } from './ProfileTable'
+import { Profile } from '@/types/profile'
 
 const profilesMock: Profile[] = [
   {
@@ -26,51 +28,50 @@ const profilesMock: Profile[] = [
 describe('ProfileTable', () => {
   it('renders message when no profiles', () => {
     render(
-      <ProfileTable
-        profiles={[]}
-        selectedIds={[]}
-        onSelectionChangeAction={() => {}}
-      />
+        <ProfileTable
+            profiles={[]}
+            selectedIds={[]}
+            onSelectionChangeAction={() => {}}
+        />
     )
-    expect(screen.getByText(/Нет профилей для отображения/i)).toBeInTheDocument()
+    expect(
+        screen.getByText(/Нет профилей для отображения/i),
+    ).toBeInTheDocument()
   })
 
   it('renders profiles and allows selection toggling', () => {
     function Wrapper() {
       const [selectedIds, setSelectedIds] = useState<string[]>([])
       return (
-        <ProfileTable
-          profiles={profilesMock}
-          selectedIds={selectedIds}
-          onSelectionChangeAction={setSelectedIds}
-        />
+          <ProfileTable
+              profiles={profilesMock}
+              selectedIds={selectedIds}
+              onSelectionChangeAction={setSelectedIds}
+          />
       )
     }
 
     render(<Wrapper />)
 
-    // Проверяем что профили отображаются
     expect(screen.getByText('user1@example.com')).toBeInTheDocument()
     expect(screen.getByText('user2@example.com')).toBeInTheDocument()
 
-    // Кликаем чекбокс первого профиля
     const checkboxes = screen.getAllByRole('checkbox')
-    const firstCheckbox = checkboxes[1] // первый чекбокс — select all
+    const firstCheckbox = checkboxes[1]
 
     fireEvent.click(firstCheckbox)
-    // После клика должен появиться выбранный id '1'
-    expect(checkboxes[1]).toBeChecked()
+    expect(firstCheckbox).toBeChecked()
   })
 
   it('toggles select all checkbox', () => {
     function Wrapper() {
       const [selectedIds, setSelectedIds] = useState<string[]>([])
       return (
-        <ProfileTable
-          profiles={profilesMock}
-          selectedIds={selectedIds}
-          onSelectionChangeAction={setSelectedIds}
-        />
+          <ProfileTable
+              profiles={profilesMock}
+              selectedIds={selectedIds}
+              onSelectionChangeAction={setSelectedIds}
+          />
       )
     }
 
@@ -79,12 +80,43 @@ describe('ProfileTable', () => {
     const checkboxes = screen.getAllByRole('checkbox')
     const selectAllCheckbox = checkboxes[0]
 
-    // Кликаем select all, все должны выделиться
     fireEvent.click(selectAllCheckbox)
     expect(selectAllCheckbox).toBeChecked()
 
-    // Кликаем select all снова, все должны сняться
     fireEvent.click(selectAllCheckbox)
     expect(selectAllCheckbox).not.toBeChecked()
+  })
+
+  it('sorts by email and toggles sort direction', () => {
+    function Wrapper() {
+      const [selectedIds, setSelectedIds] = useState<string[]>([])
+      return (
+          <ProfileTable
+              profiles={profilesMock}
+              selectedIds={selectedIds}
+              onSelectionChangeAction={setSelectedIds}
+          />
+      )
+    }
+
+    render(<Wrapper />)
+
+    const emailHeader = screen.getByText('Имя')
+    const sortIcon = () =>
+        screen.getByText('Имя').parentElement?.querySelector('svg')
+
+    // Изначально — сортировка по email ASC (ChevronUp)
+    expect(sortIcon()).toBeInTheDocument()
+
+    // Клик => сортировка по email DESC (ChevronDown)
+    fireEvent.click(emailHeader)
+    expect(sortIcon()).toBeInTheDocument()
+
+    // Клик по другой колонке => сортировка по другой и icon исчезает
+    const tagHeader = screen.getByText('Теги')
+    fireEvent.click(tagHeader)
+
+    // icon у email должен исчезнуть
+    expect(sortIcon()).not.toBeInTheDocument()
   })
 })

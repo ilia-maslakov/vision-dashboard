@@ -1,5 +1,5 @@
 import React from 'react'
-import {vi} from 'vitest'
+import {Mock, vi} from 'vitest'
 import {act, render, screen, waitFor} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {ProfileUploadDialog, ProfileUploadDialogRef} from './ProfileUploadDialog'
@@ -28,7 +28,7 @@ describe('ProfileUploadDialog', () => {
                 {name: 'Bob', status: 'inactive', tag: '', note: ''},
             ]
 
-        ;(getProfileDescriptionsFromRaw as unknown as vi.Mock).mockResolvedValue(descriptionsMock)
+        ;(getProfileDescriptionsFromRaw as unknown as Mock).mockResolvedValue(descriptionsMock)
 
         const ref = React.createRef<ProfileUploadDialogRef>()
 
@@ -58,7 +58,8 @@ describe('ProfileUploadDialog', () => {
     it('should close modal on cancel', async () => {
         const fileContent = JSON.stringify([{profile_name: 'Alice'}])
 
-        ;(getProfileDescriptionsFromRaw as unknown as vi.Mock).mockResolvedValue([{
+        ;
+        (getProfileDescriptionsFromRaw as unknown as Mock).mockResolvedValue([{
             name: 'Alice',
             status: 'active',
             tag: '',

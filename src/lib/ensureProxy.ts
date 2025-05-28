@@ -1,4 +1,4 @@
-import { BASE, token } from './authToken'
+import { BASE } from './authToken'
 import { fetchJson } from './fetchJson'
 
 export async function ensureProxy(folderId: string, proxy: any): Promise<string> {
