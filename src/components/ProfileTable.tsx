@@ -1,20 +1,11 @@
 'use client'
 
+import {Profile} from '@/types/profile'
 import {useState} from 'react'
 import {Badge} from '@/components/ui/badge'
 import {ScrollArea} from '@/components/ui/scroll-area'
 import {Checkbox} from '@/components/ui/checkbox'
 import {ChevronDown, ChevronUp} from 'lucide-react'
-
-interface Profile {
-    id: string
-    email: string
-    os: 'apple' | 'android'
-    status: string
-    proxy?: string
-    tag?: string
-    note?: string
-}
 
 interface ProfileTableProps {
     profiles: Profile[]

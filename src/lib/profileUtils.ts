@@ -1,4 +1,4 @@
-﻿import {getProfilesWithMeta} from '@/lib/emprClient'
+﻿import {getProfilesWithMeta} from '@/lib/getProfilesWithMeta'
 import {ProfileDescription} from "@/types/profileDescription"
 
 export async function getProfileDescriptionsFromRaw(

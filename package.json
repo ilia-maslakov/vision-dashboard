@@ -7,6 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "eslint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "lint": "next lint . --max-warnings=0"
   },
   "dependencies": {
@@ -26,16 +27,26 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.7",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/bcrypt": "^5.0.2",
+    "@types/jest": "^29.5.14",
     "@types/node": "^22.15.21",
     "@types/react": "^18.2.42",
     "@types/react-dom": "^18.2.17",
+    "@vitejs/plugin-react": "^4.5.0",
+    "@vitest/coverage-istanbul": "3.1.4",
+    "@vitest/coverage-v8": "3.1.4",
     "autoprefixer": "^10.4.21",
-    "eslint": "8.57.1",
-    "eslint-config-next": "^14.2.3",
+    "eslint": "^9.27.0",
+    "eslint-config-next": "^15.3.2",
+    "jsdom": "^26.1.0",
     "postcss": "^8.5.3",
     "tailwindcss": "^4.1.7",
     "tailwindcss-cli": "^0.1.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "vitest": "^3.1.4"
   }
 }
