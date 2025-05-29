@@ -12,7 +12,14 @@ const fetchJson = async (url: string) => {
 
 export async function GET(req: NextRequest) {
   const folderId = req.nextUrl.searchParams.get("folderId");
-  if (!folderId) return new Response("folderId required", { status: 400 });
+  if (!folderId) {
+    return new Response(JSON.stringify({ error: "folderId required" }), {
+      status: 400,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
 
   const idsParam = req.nextUrl.searchParams.get("ids"); // "id1,id2,id3"
   const filterIds = idsParam ? idsParam.split(",").filter(Boolean) : null;

@@ -1,28 +1,28 @@
-import { defineConfig } from 'vitest/config'
-import path from 'path'
-import react from '@vitejs/plugin-react'
+import react from "@vitejs/plugin-react";
+import path from "path";
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src'),
+      "@": path.resolve(__dirname, "src"),
     },
   },
-  plugins: [react(),],
+  plugins: [react()],
   test: {
     globals: true,
-    environment: 'jsdom',
-    setupFiles: './vitest.setup.ts',
+    environment: "jsdom",
+    setupFiles: "./vitest.setup.ts",
     coverage: {
-      reporter: ['text', 'json', 'html'],
-      provider: 'istanbul',
+      reporter: ["text", "json", "html"],
+      provider: "istanbul",
       exclude: [
-        'next.config.js',
-        'postcss.config.js',
-        'tailwind.config.js',
-        'vite.config.ts',
-        '.next/**',
+        "next.config.js",
+        "postcss.config.js",
+        "tailwind.config.js",
+        "vite.config.ts",
+        ".next/**",
       ],
     },
   },
-})
+});

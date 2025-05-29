@@ -28,7 +28,6 @@
         "allowTemplateLiterals": true
       }
     ],
-    "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-unused-vars": "off",
     "prettier/prettier": [
       "error"
@@ -72,6 +71,6 @@
   "ignorePatterns": [
     "node_modules",
     ".next",
-    "src/shared/api/*"
+    "tailwind.config.js"
   ]
 }

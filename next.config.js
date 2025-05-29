@@ -4,6 +4,6 @@ const nextConfig = {
   env: {
     EMPR_TOKEN: process.env.EMPR_TOKEN,
   },
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
