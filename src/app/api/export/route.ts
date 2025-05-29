@@ -1,59 +1,49 @@
 import { NextRequest } from 'next/server'
 
-const BASE = 'https://v1.empr.cloud/api/v1'
-const TOKEN = process.env.EMPR_TOKEN!
-
-const headers = {
-  'X-Token': TOKEN,
-}
+const BASE   = 'https://v1.empr.cloud/api/v1'
+const TOKEN  = process.env.EMPR_TOKEN!
+const HEADERS = { 'X-Token': TOKEN }
 
 const fetchJson = async (url: string) => {
-  const res = await fetch(url, { headers })
+  const res = await fetch(url, { headers: HEADERS })
   if (!res.ok) throw new Error(`Ошибка запроса ${url}: ${res.status}`)
   return res.json()
 }
 
 export async function GET(req: NextRequest) {
   const folderId = req.nextUrl.searchParams.get('folderId')
-  if (!folderId) {
-    return new Response(JSON.stringify({ error: 'folderId required' }), { status: 400 })
-  }
+  if (!folderId) return new Response('folderId required', { status: 400 })
 
-  const profilesRes = await fetchJson(`${BASE}/folders/${folderId}/profiles?ps=1000`)
-  const items = profilesRes.data?.items || []
+  const idsParam  = req.nextUrl.searchParams.get('ids')       // "id1,id2,id3"
+  const filterIds = idsParam ? idsParam.split(',').filter(Boolean) : null
+
+  const { data: { items: allProfiles = [] } = {} } =
+      await fetchJson(`${BASE}/folders/${folderId}/profiles?ps=1000`)
+
+  const profiles = filterIds ? allProfiles.filter(p => filterIds.includes(p.id))
+      : allProfiles
 
   const result = []
+  for (const p of profiles) {
+    const { id, profile_name = '', profile_notes = '',
+      profile_status = null, profile_tags = [], proxy = null } = p
 
-  for (const profile of items) {
-    const profile_name: string = profile.profile_name || ''
-    const profile_notes: string= profile.profile_notes || ''
-    const profile_status: string = profile.profile_status || null
-    const profile_tags = profile.profile_tags || []
-    const profileId: string = profile.id
-    const proxy = profile.proxy || null
-
-    let cookie = []
+    let cookie: any[] = []
     try {
-      const cookiesRes = await fetchJson(`${BASE}/cookies/${folderId}/${profileId}`)
-      cookie = cookiesRes.data || []
-    } catch (err) {
-      console.warn(`Куки не получены для профиля ${profile_name}: ${err}`)
+      const { data = [] } = await fetchJson(`${BASE}/cookies/${folderId}/${id}`)
+      cookie = data
+    } catch (e) {
+      console.warn(`Куки не получены для профиля ${profile_name}: ${e}`)
     }
 
-    result.push({
-      profile_name,
-      proxy,
-      profile_notes,
-      profile_status,
-      profile_tags,
-      cookie,
-    })
+    result.push({ profile_name, proxy, profile_notes, profile_status, profile_tags, cookie })
   }
 
+  const filename = `profiles-${new Date().toISOString().slice(0,10).replace(/-/g,'')}.json`
   return new Response(JSON.stringify(result, null, 2), {
     headers: {
-      'Content-Type': 'application/json',
-      'Content-Disposition': 'attachment; filename="profiles.json"',
+      'Content-Type':        'application/json',
+      'Content-Disposition': `attachment; filename="${filename}"`,
     },
   })
 }

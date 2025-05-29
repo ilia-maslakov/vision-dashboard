@@ -61,28 +61,26 @@ export default function HomePage() {
     const handleDownload = async () => {
         if (!selectedFolderId) return
 
-        const defaultFileName = `profiles-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}.json`
-        const name = prompt('Введите имя файла для сохранения:', defaultFileName)
+        const query =
+            selectedIds.length > 0
+                ? `folderId=${selectedFolderId}&ids=${selectedIds.join(',')}`
+                : `folderId=${selectedFolderId}`
 
-        if (!name) return
-
-        const res = await fetch(`/api/export?folderId=${selectedFolderId}`)
-        if (!res.ok) {
-            alert('Ошибка при получении файла')
-            return
-        }
+        const res = await fetch(`/api/export?${query}`)
+        if (!res.ok) return alert('Ошибка при экспорте')
 
         const blob = await res.blob()
-        const blobUrl = URL.createObjectURL(blob)
 
-        const a = document.createElement('a')
-        a.href = blobUrl
-        a.download = name.endsWith('.json') ? name : `${name}.json`
-        document.body.appendChild(a)
-        a.click()
-        a.remove()
-        URL.revokeObjectURL(blobUrl)
+        const name = prompt(
+            'Имя файла?',
+            `profiles-${new Date().toISOString().slice(0,10).replace(/-/g,'')}.json`
+        ) || 'profiles.json'
+
+        const url = URL.createObjectURL(blob)
+        Object.assign(document.createElement('a'), { href: url, download: name }).click()
+        URL.revokeObjectURL(url)
     }
+
 
     const handleDelete = async () => {
         if (!selectedFolderId || selectedIds.length === 0) return
