@@ -1,45 +1,45 @@
-// src/components/ActionPanel.test.tsx
-import { render, screen, fireEvent } from '@testing-library/react'
-import { describe, it, expect, vi } from 'vitest'
-import { ActionPanel } from './ActionPanel'
+import { fireEvent, render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 
-describe('ActionPanel', () => {
-  it('отображает количество выбранных элементов', () => {
-    render(<ActionPanel selectedCount={3} />)
-    expect(screen.getByText('3')).toBeInTheDocument()
-  })
+import { ActionPanel } from "./ActionPanel";
 
-  it('вызывает onUploadAction при клике на кнопку "Загрузить"', () => {
-    const onUpload = vi.fn()
-    render(<ActionPanel selectedCount={1} onUploadAction={onUpload} />)
+describe("ActionPanel", () => {
+  it("отображает количество выбранных элементов", () => {
+    render(<ActionPanel selectedCount={3} />);
+    expect(screen.getByText("3")).toBeInTheDocument();
+  });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Загрузить' }))
-    expect(onUpload).toHaveBeenCalled()
-  })
+  it("вызывает onUploadAction при клике на кнопку Загрузить", () => {
+    const onUpload = vi.fn();
+    render(<ActionPanel selectedCount={1} onUploadAction={onUpload} />);
 
-  it('вызывает onDownloadAction при клике на кнопку "Скачать"', () => {
-    const onDownload = vi.fn()
-    render(<ActionPanel selectedCount={1} onDownloadAction={onDownload} />)
+    fireEvent.click(screen.getByRole("button", { name: "Загрузить" }));
+    expect(onUpload).toHaveBeenCalled();
+  });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Скачать' }))
-    expect(onDownload).toHaveBeenCalled()
-  })
+  it("вызывает onDownloadAction при клике на кнопку Скачать", () => {
+    const onDownload = vi.fn();
+    render(<ActionPanel selectedCount={1} onDownloadAction={onDownload} />);
 
-  it('вызывает onDeleteAction при клике на кнопку "Удалить"', () => {
-    const onDelete = vi.fn()
-    render(<ActionPanel selectedCount={2} onDeleteAction={onDelete} />)
+    fireEvent.click(screen.getByRole("button", { name: "Скачать" }));
+    expect(onDownload).toHaveBeenCalled();
+  });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Удалить' }))
-    expect(onDelete).toHaveBeenCalled()
-  })
+  it("вызывает onDeleteAction при клике на кнопку Удалить", () => {
+    const onDelete = vi.fn();
+    render(<ActionPanel selectedCount={2} onDeleteAction={onDelete} />);
 
-  it('отключает кнопку "Удалить", если selectedCount === 0', () => {
-    const onDelete = vi.fn()
-    render(<ActionPanel selectedCount={0} onDeleteAction={onDelete} />)
+    fireEvent.click(screen.getByRole("button", { name: "Удалить" }));
+    expect(onDelete).toHaveBeenCalled();
+  });
 
-    const deleteButton = screen.getByRole('button', { name: 'Удалить' })
-    expect(deleteButton).toBeDisabled()
-    fireEvent.click(deleteButton)
-    expect(onDelete).not.toHaveBeenCalled()
-  })
-})
+  it("отключает кнопку Удалить, если selectedCount === 0", () => {
+    const onDelete = vi.fn();
+    render(<ActionPanel selectedCount={0} onDeleteAction={onDelete} />);
+
+    const deleteButton = screen.getByRole("button", { name: "Удалить" });
+    expect(deleteButton).toBeDisabled();
+    fireEvent.click(deleteButton);
+    expect(onDelete).not.toHaveBeenCalled();
+  });
+});

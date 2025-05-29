@@ -1,24 +1,24 @@
-'use client'
+"use client";
 
-import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import {FormEvent, useState} from 'react'
+import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export default function LoginPage() {
-  const router = useRouter()
-  const [error, setError] = useState(false)
+  const router = useRouter();
+  const [error, setError] = useState(false);
 
   async function handleLogin(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const form = new FormData(e.currentTarget)
-    const res = await signIn('credentials', {
-      username: form.get('username'),
-      password: form.get('password'),
+    e.preventDefault();
+    const form = new FormData(e.currentTarget);
+    const res = await signIn("credentials", {
+      username: form.get("username"),
+      password: form.get("password"),
       redirect: false,
-    })
+    });
 
-    if (res?.ok) router.push('/')
-    else setError(true)
+    if (res?.ok) router.push("/");
+    else setError(true);
   }
 
   return (
@@ -27,7 +27,9 @@ export default function LoginPage() {
         onSubmit={handleLogin}
         className="bg-zinc-900 p-8 rounded-2xl shadow-xl w-full max-w-sm space-y-5"
       >
-        <h2 className="text-2xl font-bold text-white text-center">Welcome Back</h2>
+        <h2 className="text-2xl font-bold text-white text-center">
+          Welcome Back
+        </h2>
 
         <input
           name="username"
@@ -50,9 +52,11 @@ export default function LoginPage() {
         </button>
 
         {error && (
-          <p className="text-red-500 text-sm text-center">Неверный логин или пароль</p>
+          <p className="text-red-500 text-sm text-center">
+            Неверный логин или пароль
+          </p>
         )}
       </form>
     </div>
-  )
+  );
 }
